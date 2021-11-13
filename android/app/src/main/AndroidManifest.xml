@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.odds_league">
+    package="com.odds2021league">
    <application
         android:label="odds_league"
         android:icon="@mipmap/ic_launcher">
