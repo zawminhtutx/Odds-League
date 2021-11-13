@@ -1,0 +1,6 @@
+{
+  "appTitle": "odds_league",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
