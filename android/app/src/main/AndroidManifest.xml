@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.odds2021league">
    <application
-        android:label="odds_league"
+        android:label="Odds League"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
