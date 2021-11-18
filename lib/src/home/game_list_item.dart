@@ -1,12 +1,22 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:odds_league/custom_theme.dart';
 
+import 'data/models/game.dart';
+import 'data/models/odd.dart';
+import 'data/models/team.dart';
+
 class GameListItem extends StatelessWidget {
-  const GameListItem({Key? key}) : super(key: key);
+  final Game game;
+
+  const GameListItem({Key? key, required this.game}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final dateFormat = DateFormat('d.M.y - H:mm');
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -16,9 +26,9 @@ class GameListItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          const Text(
-            '19.10.2021 - 22:00',
-            style: TextStyle(
+          Text(
+            dateFormat.format(game.time),
+            style: const TextStyle(
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -27,11 +37,16 @@ class GameListItem extends StatelessWidget {
           ),
           IntrinsicHeight(
             child: Row(
-              children: const [
+              children: [
                 Expanded(
-                  child: _Teams(),
+                  child: _Teams(
+                    game: game,
+                  ),
                 ),
-                _OddOptionButtons(),
+                if (game.odd != null)
+                  _OddOptionButtons(
+                    odd: game.odd!,
+                  ),
               ],
             ),
           )
@@ -42,24 +57,40 @@ class GameListItem extends StatelessWidget {
 }
 
 class _Teams extends StatelessWidget {
-  const _Teams({Key? key}) : super(key: key);
+  final Game game;
+
+  const _Teams({Key? key, required this.game}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        _Team(),
-        SizedBox(
+      children: [
+        _Team(
+          team: game.home,
+        ),
+        const SizedBox(
           height: 8.0,
         ),
-        _Team(),
+        _Team(
+          team: game.away,
+        ),
       ],
     );
   }
 }
 
 class _Team extends StatelessWidget {
-  const _Team({Key? key}) : super(key: key);
+  final Team team;
+  final List<Color> colors = [
+    Colors.grey,
+    Colors.green,
+    Colors.blue,
+    Colors.black,
+    Colors.purple,
+    Colors.cyan,
+  ];
+
+  _Team({Key? key, required this.team}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -74,20 +105,40 @@ class _Team extends StatelessWidget {
             borderRadius: BorderRadius.circular(50.0),
           ),
           child: Image.network(
-            'https://spoyer.ru/api/team_img/soccer/4734.png',
+            'https://spoyer.ru/api/team_img/soccer/${team.id}.png',
+            errorBuilder: (BuildContext context, Object exception,
+                StackTrace? stackTrace) {
+              final teamName = team.name
+                  .split(' ')
+                  .take(2)
+                  .fold<String>('', (value, element) => value + element[0]);
+              return CircleAvatar(
+                backgroundColor: colors[Random().nextInt(colors.length)],
+                child: Text(teamName),
+              );
+            },
           ),
         ),
         const SizedBox(
           width: 10,
         ),
-        const Text('Атлетико Мадрид'),
+        Expanded(
+          child: Text(
+            team.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }
 }
 
 class _OddOptionButtons extends StatelessWidget {
-  const _OddOptionButtons({Key? key}) : super(key: key);
+  final Odd odd;
+  final numberFormat = NumberFormat("###.0#", "en_US");
+
+  _OddOptionButtons({Key? key, required this.odd}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +156,8 @@ class _OddOptionButtons extends StatelessWidget {
                   color: CustomColors.buttonBackground,
                   borderRadius: BorderRadius.circular(4.0),
                 ),
-                child: const Center(
-                  child: Text('П1 5.80'),
+                child: Center(
+                  child: Text('П1 ${numberFormat.format(odd.homeOdd)}'),
                 ),
               ),
             ),
@@ -120,8 +171,8 @@ class _OddOptionButtons extends StatelessWidget {
                   color: CustomColors.buttonBackground,
                   borderRadius: BorderRadius.circular(4.0),
                 ),
-                child: const Center(
-                  child: Text('П1 5.80'),
+                child: Center(
+                  child: Text('П1 ${numberFormat.format(odd.awayOdd)}'),
                 ),
               ),
             )
@@ -137,9 +188,9 @@ class _OddOptionButtons extends StatelessWidget {
             color: CustomColors.buttonBackground,
             borderRadius: BorderRadius.circular(4.0),
           ),
-          child: const Center(
+          child: Center(
             child: Text(
-              'X  4.30',
+              'X  ${numberFormat.format(odd.drawOdd)}',
             ),
           ),
         )
