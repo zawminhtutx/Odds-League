@@ -41,7 +41,7 @@ class ApiRequests {
 
   Future<Either<ApiFailure, List<Game>>> getPrematchGames(Query query) async {
     final queryParams = query.toJson();
-    final uri = Uri.https('spoyer.ru', 'api/en/get.php', {
+    final uri = Uri.https('spoyer.ru', 'api/get.php', {
       ...queryParams,
       'sport': 'soccer',
       'login': apiLogin.toString(),
@@ -58,12 +58,8 @@ class ApiRequests {
       final gamesJsonList =
           (jsonDecode(response.body)['games_pre'] as List<dynamic>);
       final games = await Future.wait<Game>(gamesJsonList.map((e) {
-        return getOddsJson(e['game_id']).then((value) => Game.fromJson({
-              ...e,
-              ...queryParams,
-              'is_live': false,
-              'odd': value
-            }));
+        return getOddsJson(e['game_id']).then((value) => Game.fromJson(
+            {...e, ...queryParams, 'is_live': false, 'odd': value}));
       }));
 
       return right(games);
@@ -73,7 +69,7 @@ class ApiRequests {
   }
 
   Future<Map<String, dynamic>?> getOddsJson(String gameId) async {
-    final uri = Uri.https('spoyer.ru', 'api/en/get.php', {
+    final uri = Uri.https('spoyer.ru', 'api/get.php', {
       'login': apiLogin.toString(),
       'token': apiToken.toString(),
       'task': 'allodds',
