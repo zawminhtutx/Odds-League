@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:odds_league/custom_theme.dart';
+import 'package:odds_league/src/favourites/favourite_view.dart';
 import 'package:odds_league/src/game_detail/game_detail_view.dart';
 
+import 'calendar/calendar_view.dart';
 import 'home/data/models/game.dart';
 import 'home/home_view.dart';
 import 'settings/settings_controller.dart';
@@ -41,6 +44,7 @@ class MyApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
+          debugShowCheckedModeBanner: false,
           supportedLocales: const [
             Locale('en', ''), // English, no country code
           ],
@@ -58,6 +62,9 @@ class MyApp extends StatelessWidget {
           // SettingsController to display the correct theme.
           theme: ThemeData(
             scaffoldBackgroundColor: Colors.black,
+            iconTheme: const IconThemeData(
+              color: CustomColors.accentColor,
+            ),
           ),
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
@@ -75,6 +82,10 @@ class MyApp extends StatelessWidget {
                     return GameDetailView(
                       game: routeSettings.arguments as Game,
                     );
+                  case CalendarView.routeName:
+                    return const CalendarView();
+                  case FavouriteView.routeName:
+                    return const FavouriteView();
                   default:
                     return const HomeView();
                 }

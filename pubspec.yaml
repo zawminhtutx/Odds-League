@@ -22,6 +22,7 @@ dependencies:
   intl: ^0.17.0
   json_annotation: ^4.3.0
   json_serializable: ^6.0.1
+  url_launcher: ^6.0.14
 
 dev_dependencies:
   flutter_test:
@@ -39,4 +40,9 @@ flutter:
 
   assets:
     # Add assets from the images directory to the application.
-    - assets/images/
+    - assets/
+
+  fonts:
+    - family: CustomIcons
+      fonts:
+        - asset: assets/fonts/CustomIcons.ttf

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:odds_league/src/custom_drawer.dart';
 import 'package:odds_league/src/home/data/api_requests/api_requests.dart';
 import 'package:odds_league/src/home/game_list_item.dart';
 
+import '../../custom_icons.dart';
 import 'bloc/game_bloc.dart';
 import 'data/models/game.dart';
 
@@ -31,7 +33,21 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: Builder(builder: (context) {
+          return IconButton(
+            icon: const Icon(
+              CustomIcons.burger,
+              size: 16,
+            ),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+            splashRadius: 32.0,
+          );
+        }),
+        backgroundColor: Colors.black,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider.value(
@@ -63,6 +79,7 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
       ),
+      drawer: const CustomDrawer(),
     );
   }
 
