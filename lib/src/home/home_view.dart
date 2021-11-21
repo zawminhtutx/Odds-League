@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:odds_league/src/custom_drawer.dart';
-import 'package:odds_league/src/home/data/api_requests/api_requests.dart';
 import 'package:odds_league/src/home/game_list_item.dart';
 
 import '../../custom_icons.dart';
@@ -21,12 +20,10 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final PagingController<int, Game> _pagingController;
-  late final GameBloc _gameBloc;
 
   @override
   void initState() {
     super.initState();
-    _gameBloc = GameBloc(ApiRequests());
     _pagingController = PagingController<int, Game>(firstPageKey: 1);
     _pagingController.addPageRequestListener(_getPage);
   }
@@ -51,31 +48,28 @@ class _HomeViewState extends State<HomeView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: BlocProvider.value(
-          value: _gameBloc,
-          child: BlocListener<GameBloc, GameState>(
-            listener: (context, state) {
-              final finishedLoading = state.status == LoadingStatus.success ||
-                  state.status == LoadingStatus.failure;
-              if (finishedLoading) {
-                _pagingController.value = PagingState(
-                  error: state.error,
-                  nextPageKey: state.nextPage,
-                  itemList: state.games.isNotEmpty ? state.games : null,
-                );
-              }
-            },
-            child: PagedListView<int, Game>.separated(
-              pagingController: _pagingController,
-              builderDelegate: PagedChildBuilderDelegate(
-                itemBuilder: (_, item, i) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: GameListItem(game: item),
-                ),
+        child: BlocListener<GameBloc, GameState>(
+          listener: (context, state) {
+            final finishedLoading = state.status == LoadingStatus.success ||
+                state.status == LoadingStatus.failure;
+            if (finishedLoading) {
+              _pagingController.value = PagingState(
+                error: state.error,
+                nextPageKey: state.nextPage,
+                itemList: state.games.isNotEmpty ? state.games : null,
+              );
+            }
+          },
+          child: PagedListView<int, Game>.separated(
+            pagingController: _pagingController,
+            builderDelegate: PagedChildBuilderDelegate(
+              itemBuilder: (_, item, i) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: GameListItem(game: item),
               ),
-              separatorBuilder: (_, i) => const SizedBox(
-                height: 4.0,
-              ),
+            ),
+            separatorBuilder: (_, i) => const SizedBox(
+              height: 4.0,
             ),
           ),
         ),
@@ -85,6 +79,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _getPage(pageKey) {
-    _gameBloc.add(GetGamesRequested(page: pageKey, day: widget.day));
+    context.read<GameBloc>().add(GetGamesRequested(page: pageKey));
   }
 }

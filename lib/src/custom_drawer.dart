@@ -105,7 +105,7 @@ class DrawerMenu extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: CustomColors.accentColor,
+            color: CustomColors.primaryColor,
           ),
           const SizedBox(width: 8.0),
           Text(

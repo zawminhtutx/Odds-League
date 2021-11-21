@@ -61,10 +61,16 @@ class ApiRequests {
         final awayId = int.parse(element['away']['id']);
         return homeId < 60000 && awayId < 60000;
       });
-      final games = await Future.wait<Game>(gamesJsonList.map((e) {
-        return getOddsJson(e['game_id']).then((value) => Game.fromJson(
-            {...e, ...queryParams, 'is_live': false, 'odd': value}));
+      final nullableGames = await Future.wait<Game?>(gamesJsonList.map((e) {
+        return getOddsJson(e['game_id']).then((value) {
+          if (value == null) {
+            return null;
+          }
+          return Game.fromJson(
+              {...e, ...queryParams, 'is_live': false, 'odd': value});
+        });
       }));
+      final games = nullableGames.whereType<Game>().toList();
 
       return right(games);
     } else {
