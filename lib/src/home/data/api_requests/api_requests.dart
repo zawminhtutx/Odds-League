@@ -62,7 +62,10 @@ class ApiRequests {
         return homeId < 60000 && awayId < 60000;
       });
       final nullableGames = await Future.wait<Game?>(gamesJsonList.map((e) {
-        return getOddsJson(e['game_id']).then((value) {
+        return getOddsJson(
+          gameId: e['game_id'],
+          isTopOdd: query.isTopOdds,
+        ).then((value) {
           if (value == null) {
             return null;
           }
@@ -78,7 +81,10 @@ class ApiRequests {
     }
   }
 
-  Future<Map<String, dynamic>?> getOddsJson(String gameId) async {
+  Future<Map<String, dynamic>?> getOddsJson({
+    required String gameId,
+    required bool isTopOdd,
+  }) async {
     final uri = Uri.https('spoyer.ru', 'api/get.php', {
       'login': apiLogin.toString(),
       'token': apiToken.toString(),
@@ -93,6 +99,9 @@ class ApiRequests {
     if (response.statusCode == 200) {
       final resultsMap =
           jsonDecode(response.body)['results'] as Map<String, dynamic>;
+      double totalOdds = 0;
+      Map<String, dynamic>? oddMapToBeReturned;
+
       for (var bookMaker in _bookMakers) {
         if (resultsMap.containsKey(bookMaker)) {
           if (resultsMap[bookMaker]['odds'] is Map) {
@@ -109,7 +118,18 @@ class ApiRequests {
                         oddMap.containsKey('away_od');
 
                     if (containsKeys) {
-                      return oddMap;
+                      if (!isTopOdd) {
+                        return oddMap;
+                      }
+                      final homeOdd = double.parse(oddMap['home_od'] ?? '0');
+                      final awayOdd = double.parse(oddMap['away_od'] ?? '0');
+                      final drawOdd = double.parse(oddMap['draw_od'] ?? '0');
+                      final sumOfOdds = homeOdd + awayOdd + drawOdd;
+
+                      if (sumOfOdds > totalOdds) {
+                        oddMapToBeReturned = oddMap;
+                        totalOdds = sumOfOdds;
+                      }
                     }
                   }
                 }
@@ -118,6 +138,8 @@ class ApiRequests {
           }
         }
       }
+
+      return oddMapToBeReturned;
     }
   }
 }

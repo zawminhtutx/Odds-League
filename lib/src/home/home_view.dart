@@ -5,12 +5,15 @@ import 'package:odds_league/src/custom_drawer.dart';
 import 'package:odds_league/src/home/game_list_item.dart';
 
 import '../../custom_icons.dart';
+import '../../custom_theme.dart';
 import 'bloc/game_bloc.dart';
 import 'data/models/game.dart';
+import 'home_view_param.dart';
 
 class HomeView extends StatefulWidget {
-  final DateTime day;
-  const HomeView({Key? key, required this.day}) : super(key: key);
+  final HomeViewParam homeViewParam;
+
+  const HomeView({Key? key, required this.homeViewParam}) : super(key: key);
 
   static const routeName = '/';
 
@@ -45,6 +48,24 @@ class _HomeViewState extends State<HomeView> {
           );
         }),
         backgroundColor: Colors.black,
+        actions: [
+          if (widget.homeViewParam.isTopOdds)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: const [
+                  Text('Top odds'),
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  Icon(
+                    CustomIcons.fire,
+                    color: CustomColors.primaryColor,
+                  )
+                ],
+              ),
+            ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -79,6 +100,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _getPage(pageKey) {
-    context.read<GameBloc>().add(GetGamesRequested(page: pageKey));
+    context.read<GameBloc>().add(
+          GetGamesRequested(
+            page: pageKey,
+            isTopOdds: widget.homeViewParam.isTopOdds,
+          ),
+        );
   }
 }

@@ -7,7 +7,6 @@ import 'package:odds_league/src/home/data/models/game.dart';
 import 'package:odds_league/src/home/data/models/odd_option.dart';
 import 'package:odds_league/src/home/data/models/team.dart';
 import 'package:odds_league/src/odd_text.dart';
-import 'package:provider/src/provider.dart';
 
 import '../team_logo.dart';
 
