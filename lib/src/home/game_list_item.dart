@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:odds_league/custom_theme.dart';
 import 'package:odds_league/src/game_detail/game_detail_view.dart';
+import 'package:odds_league/src/home/bloc/game_bloc.dart';
+import 'package:odds_league/src/home/data/models/odd_option.dart';
 import 'package:odds_league/src/odd_text.dart';
 import 'package:odds_league/src/team_logo.dart';
 
 import 'data/models/game.dart';
-import 'data/models/odd.dart';
 import 'data/models/team.dart';
 
 class GameListItem extends StatelessWidget {
@@ -55,7 +57,7 @@ class GameListItem extends StatelessWidget {
                   ),
                   if (game.odd != null)
                     _OddOptionButtons(
-                      odd: game.odd!,
+                      game: game,
                     ),
                 ],
               ),
@@ -124,9 +126,9 @@ class _Team extends StatelessWidget {
 }
 
 class _OddOptionButtons extends StatelessWidget {
-  final Odd odd;
+  final Game game;
 
-  const _OddOptionButtons({Key? key, required this.odd}) : super(key: key);
+  const _OddOptionButtons({Key? key, required this.game}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -137,52 +139,90 @@ class _OddOptionButtons extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: CustomColors.buttonBackground,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                child: Center(
-                  child: OddText(team: 'П1', odd: odd.homeOdd),
+            if (game.odd != null && game.odd!.homeOdd != null)
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    context.read<GameBloc>().add(
+                          AddedToFavourite(
+                            gameId: game.gameId,
+                            option: OddOption.home,
+                          ),
+                        );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: game.oddOption == OddOption.home
+                          ? CustomColors.primaryColor
+                          : CustomColors.buttonBackground,
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Center(
+                      child: OddText(team: 'П1', odd: game.odd!.homeOdd),
+                    ),
+                  ),
                 ),
               ),
-            ),
             const SizedBox(
               height: 8.0,
             ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: CustomColors.buttonBackground,
-                  borderRadius: BorderRadius.circular(4.0),
+            if (game.odd != null && game.odd!.awayOdd != null)
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    context.read<GameBloc>().add(
+                          AddedToFavourite(
+                            gameId: game.gameId,
+                            option: OddOption.away,
+                          ),
+                        );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: game.oddOption == OddOption.away
+                          ? CustomColors.primaryColor
+                          : CustomColors.buttonBackground,
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Center(
+                      child: OddText(team: 'П2', odd: game.odd!.awayOdd),
+                    ),
+                  ),
                 ),
-                child: Center(
-                  child: OddText(team: 'П2', odd: odd.awayOdd),
-                ),
-              ),
-            )
+              )
           ],
         ),
         const SizedBox(
           width: 6.0,
         ),
-        Container(
-          height: double.infinity,
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: CustomColors.buttonBackground,
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: Center(
-            child: OddText(
-              team: 'X',
-              odd: odd.drawOdd,
+        if (game.odd != null && game.odd!.drawOdd != null)
+          GestureDetector(
+            onTap: () {
+              context.read<GameBloc>().add(
+                    AddedToFavourite(
+                      gameId: game.gameId,
+                      option: OddOption.draw,
+                    ),
+                  );
+            },
+            child: Container(
+              height: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: game.oddOption == OddOption.draw
+                    ? CustomColors.primaryColor
+                    : CustomColors.buttonBackground,
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              child: Center(
+                  child: OddText(
+                team: 'X',
+                odd: game.odd!.drawOdd,
+              )),
             ),
-          ),
-        )
+          )
       ],
     );
   }

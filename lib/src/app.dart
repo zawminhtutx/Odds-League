@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:odds_league/custom_theme.dart';
 import 'package:odds_league/src/favourites/favourite_view.dart';
 import 'package:odds_league/src/game_detail/game_detail_view.dart';
+import 'package:odds_league/src/home/bloc/game_bloc.dart';
+import 'package:odds_league/src/home/data/api_requests/api_requests.dart';
 
 import 'calendar/calendar_view.dart';
 import 'home/data/models/game.dart';
@@ -11,7 +14,7 @@ import 'home/home_view.dart';
 import 'settings/settings_controller.dart';
 
 /// The Widget that configures your application.
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({
     Key? key,
     required this.settingsController,
@@ -20,13 +23,20 @@ class MyApp extends StatelessWidget {
   final SettingsController settingsController;
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GameBloc gameBloc = GameBloc(ApiRequests());
+
+  @override
   Widget build(BuildContext context) {
     // Glue the SettingsController to the MaterialApp.
     //
     // The AnimatedBuilder Widget listens to the SettingsController for changes.
     // Whenever the user updates their settings, the MaterialApp is rebuilt.
     return AnimatedBuilder(
-      animation: settingsController,
+      animation: widget.settingsController,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
           // Providing a restorationScopeId allows the Navigator built by the
@@ -62,12 +72,14 @@ class MyApp extends StatelessWidget {
           // SettingsController to display the correct theme.
           theme: ThemeData(
             scaffoldBackgroundColor: Colors.black,
+            colorScheme:
+                const ColorScheme.light(primary: CustomColors.primaryColor),
             iconTheme: const IconThemeData(
-              color: CustomColors.accentColor,
+              color: CustomColors.primaryColor,
             ),
           ),
           darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
+          themeMode: widget.settingsController.themeMode,
 
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
@@ -82,23 +94,35 @@ class MyApp extends StatelessWidget {
                     if (routeSettings.arguments != null) {
                       date = routeSettings.arguments as DateTime;
                     }
-                    return HomeView(
-                      day: date,
+                    return _wrapWithBlocProvider(
+                      child: HomeView(
+                        day: date,
+                      ),
+                      date: date,
                     );
                   case GameDetailView.routeName:
-                    return GameDetailView(
-                      game: routeSettings.arguments as Game,
+                    return _wrapWithBlocProvider(
+                      child: GameDetailView(
+                        game: routeSettings.arguments as Game,
+                      ),
+                      date: date,
                     );
                   case CalendarView.routeName:
                     return const CalendarView();
                   case FavouriteView.routeName:
-                    return const FavouriteView();
+                    return _wrapWithBlocProvider(
+                      child: const FavouriteView(),
+                      date: date,
+                    );
                   default:
                     if (routeSettings.arguments != null) {
                       date = routeSettings.arguments as DateTime;
                     }
-                    return HomeView(
-                      day: date,
+                    return _wrapWithBlocProvider(
+                      child: HomeView(
+                        day: date,
+                      ),
+                      date: date,
                     );
                 }
               },
@@ -106,6 +130,14 @@ class MyApp extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  Widget _wrapWithBlocProvider(
+      {required Widget child, required DateTime date}) {
+    return BlocProvider.value(
+      value: gameBloc..add(DateSet(date)),
+      child: child,
     );
   }
 }

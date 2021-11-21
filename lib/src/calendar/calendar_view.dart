@@ -72,7 +72,7 @@ class CalendarView extends StatelessWidget {
               size: 32,
             ),
             decoration: BoxDecoration(
-              color: CustomColors.accentColor,
+              color: CustomColors.primaryColor,
               borderRadius: BorderRadius.circular(24),
             ),
           ),
@@ -88,7 +88,7 @@ class CalendarView extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
             todayDecoration: BoxDecoration(
-              color: CustomColors.accentColor,
+              color: CustomColors.primaryColor,
               borderRadius: BorderRadius.circular(24.0),
             ),
             todayTextStyle: const TextStyle(
@@ -96,7 +96,7 @@ class CalendarView extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
             selectedDecoration: const BoxDecoration(
-              color: CustomColors.accentColor,
+              color: CustomColors.primaryColor,
             ),
           ),
           onDaySelected: (dayOne, dayTwo) {
