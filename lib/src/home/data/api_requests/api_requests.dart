@@ -47,7 +47,6 @@ class ApiRequests {
       'login': apiLogin.toString(),
       'token': apiToken.toString(),
       'task': 'predatapage',
-      'day': 'today'
     });
 
     final response = await http.get(
@@ -56,7 +55,12 @@ class ApiRequests {
 
     if (response.statusCode == 200) {
       final gamesJsonList =
-          (jsonDecode(response.body)['games_pre'] as List<dynamic>);
+          (jsonDecode(response.body)['games_pre'] as List<dynamic>)
+              .where((element) {
+        final homeId = int.parse(element['home']['id']);
+        final awayId = int.parse(element['away']['id']);
+        return homeId < 60000 && awayId < 60000;
+      });
       final games = await Future.wait<Game>(gamesJsonList.map((e) {
         return getOddsJson(e['game_id']).then((value) => Game.fromJson(
             {...e, ...queryParams, 'is_live': false, 'odd': value}));

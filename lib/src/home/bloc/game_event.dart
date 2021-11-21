@@ -6,9 +6,13 @@ abstract class GameEvent extends Equatable {
 
 class GetGamesRequested extends GameEvent {
   final int page;
+  final DateTime day;
 
-  const GetGamesRequested({required this.page});
+  const GetGamesRequested({
+    required this.page,
+    required this.day,
+  });
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [page, day];
 }

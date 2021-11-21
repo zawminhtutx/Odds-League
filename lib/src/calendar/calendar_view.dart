@@ -4,21 +4,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:odds_league/custom_theme.dart';
 import 'package:odds_league/src/custom_drawer.dart';
+import 'package:odds_league/src/home/home_view.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../custom_icons.dart';
 
-class CalendarView extends StatefulWidget {
+class CalendarView extends StatelessWidget {
   const CalendarView({Key? key}) : super(key: key);
 
   static const String routeName = 'calendar';
-
-  @override
-  State<CalendarView> createState() => _CalendarViewState();
-}
-
-class _CalendarViewState extends State<CalendarView> {
-  DateTime _focusedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +49,9 @@ class _CalendarViewState extends State<CalendarView> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: TableCalendar(
-          firstDay: DateTime.utc(2010, 10, 16),
+          firstDay: DateTime.now(),
           lastDay: DateTime.utc(2030, 3, 14),
-          focusedDay: _focusedDate,
+          focusedDay: DateTime.now(),
           headerStyle: HeaderStyle(
             titleCentered: true,
             titleTextStyle: const TextStyle(
@@ -106,9 +100,8 @@ class _CalendarViewState extends State<CalendarView> {
             ),
           ),
           onDaySelected: (dayOne, dayTwo) {
-            setState(() {
-              _focusedDate = dayTwo;
-            });
+            Navigator.pushReplacementNamed(context, HomeView.routeName,
+                arguments: dayTwo);
           },
         ),
       ),
