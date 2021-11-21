@@ -10,7 +10,8 @@ import 'bloc/game_bloc.dart';
 import 'data/models/game.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
+  final DateTime day;
+  const HomeView({Key? key, required this.day}) : super(key: key);
 
   static const routeName = '/';
 
@@ -84,6 +85,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _getPage(pageKey) {
-    _gameBloc.add(GetGamesRequested(page: pageKey));
+    _gameBloc.add(GetGamesRequested(page: pageKey, day: widget.day));
   }
 }

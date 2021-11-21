@@ -8,4 +8,5 @@ part of 'query.dart';
 
 Map<String, dynamic> _$QueryToJson(Query instance) => <String, dynamic>{
       'p': Query._pageToJson(instance.page),
+      'day': Query._dayToJson(instance.day),
     };

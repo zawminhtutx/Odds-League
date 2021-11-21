@@ -75,9 +75,16 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
+                var date = DateTime.now();
+
                 switch (routeSettings.name) {
                   case HomeView.routeName:
-                    return const HomeView();
+                    if (routeSettings.arguments != null) {
+                      date = routeSettings.arguments as DateTime;
+                    }
+                    return HomeView(
+                      day: date,
+                    );
                   case GameDetailView.routeName:
                     return GameDetailView(
                       game: routeSettings.arguments as Game,
@@ -87,7 +94,12 @@ class MyApp extends StatelessWidget {
                   case FavouriteView.routeName:
                     return const FavouriteView();
                   default:
-                    return const HomeView();
+                    if (routeSettings.arguments != null) {
+                      date = routeSettings.arguments as DateTime;
+                    }
+                    return HomeView(
+                      day: date,
+                    );
                 }
               },
             );
