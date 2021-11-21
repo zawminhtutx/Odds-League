@@ -21,6 +21,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         Query(
           page: event.page,
           day: state.date!,
+          isTopOdds: event.isTopOdds,
         ),
       );
       failureOrSuccess.fold(
@@ -68,6 +69,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
           favourites: [..._selectFavourites()],
         ),
       );
+    });
+    on<ResetState>((event, emit) async {
+      _games = [];
+      emit(state.copyWith(games: []));
     });
   }
 

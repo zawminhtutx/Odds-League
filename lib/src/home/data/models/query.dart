@@ -13,7 +13,9 @@ class Query extends Equatable {
   @JsonKey(ignore: false, toJson: _dayToJson)
   final DateTime day;
 
-  const Query({this.page = 1, required this.day});
+  final bool isTopOdds;
+
+  const Query({this.page = 1, required this.day, required this.isTopOdds});
 
   Map<String, dynamic> toJson() => _$QueryToJson(this);
 
@@ -32,5 +34,5 @@ class Query extends Equatable {
   }
 
   @override
-  List<Object?> get props => [page];
+  List<Object?> get props => [page, day, isTopOdds];
 }

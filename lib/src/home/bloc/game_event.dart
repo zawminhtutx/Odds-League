@@ -6,14 +6,17 @@ abstract class GameEvent extends Equatable {
 
 class GetGamesRequested extends GameEvent {
   final int page;
+  final bool isTopOdds;
 
   const GetGamesRequested({
     required this.page,
+    required this.isTopOdds,
   });
 
   @override
   List<Object?> get props => [
         page,
+        isTopOdds,
       ];
 }
 
@@ -43,4 +46,9 @@ class RemovedFromFavourite extends GameEvent {
 
   @override
   List<Object> get props => [gameId];
+}
+
+class ResetState extends GameEvent {
+  @override
+  List<Object> get props => [];
 }

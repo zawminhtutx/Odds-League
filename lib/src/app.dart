@@ -11,9 +11,9 @@ import 'package:odds_league/src/home/data/api_requests/api_requests.dart';
 import 'calendar/calendar_view.dart';
 import 'home/data/models/game.dart';
 import 'home/home_view.dart';
+import 'home/home_view_param.dart';
 import 'settings/settings_controller.dart';
 
-/// The Widget that configures your application.
 class MyApp extends StatefulWidget {
   const MyApp({
     Key? key,
@@ -87,42 +87,32 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
-                var date = DateTime.now();
-
                 switch (routeSettings.name) {
-                  case HomeView.routeName:
-                    if (routeSettings.arguments != null) {
-                      date = routeSettings.arguments as DateTime;
-                    }
-                    return _wrapWithBlocProvider(
-                      child: HomeView(
-                        day: date,
-                      ),
-                      date: date,
-                    );
                   case GameDetailView.routeName:
                     return _wrapWithBlocProvider(
                       child: GameDetailView(
                         game: routeSettings.arguments as Game,
                       ),
-                      date: date,
                     );
                   case CalendarView.routeName:
                     return const CalendarView();
                   case FavouriteView.routeName:
                     return _wrapWithBlocProvider(
                       child: const FavouriteView(),
-                      date: date,
                     );
+                  case HomeView.routeName:
                   default:
+                    HomeViewParam param =
+                        HomeViewParam(date: DateTime.now(), isTopOdds: false);
+
                     if (routeSettings.arguments != null) {
-                      date = routeSettings.arguments as DateTime;
+                      param = routeSettings.arguments as HomeViewParam;
                     }
                     return _wrapWithBlocProvider(
                       child: HomeView(
-                        day: date,
+                        homeViewParam: param,
                       ),
-                      date: date,
+                      date: param.date,
                     );
                 }
               },
@@ -133,10 +123,13 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _wrapWithBlocProvider(
-      {required Widget child, required DateTime date}) {
+  Widget _wrapWithBlocProvider({required Widget child, DateTime? date}) {
+    if (date != null) {
+      gameBloc.add(DateSet(date));
+    }
+
     return BlocProvider.value(
-      value: gameBloc..add(DateSet(date)),
+      value: gameBloc,
       child: child,
     );
   }

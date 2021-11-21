@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:odds_league/custom_icons.dart';
 import 'package:odds_league/src/calendar/calendar_view.dart';
 import 'package:odds_league/src/favourites/favourite_view.dart';
+import 'package:odds_league/src/home/bloc/game_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../custom_theme.dart';
 import 'home/home_view.dart';
+import 'home/home_view_param.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({Key? key}) : super(key: key);
@@ -37,6 +40,7 @@ class CustomDrawer extends StatelessWidget {
               icon: CustomIcons.soccer,
               text: 'Матчи',
               onPressed: () {
+                context.read<GameBloc>().add(ResetState());
                 Navigator.pushReplacementNamed(context, HomeView.routeName);
               },
             ),
@@ -44,7 +48,15 @@ class CustomDrawer extends StatelessWidget {
               icon: CustomIcons.fire,
               text: 'Top Odds',
               onPressed: () {
-                Navigator.pushReplacementNamed(context, HomeView.routeName);
+                context.read<GameBloc>().add(ResetState());
+                Navigator.pushReplacementNamed(
+                  context,
+                  HomeView.routeName,
+                  arguments: HomeViewParam(
+                    date: DateTime.now(),
+                    isTopOdds: true,
+                  ),
+                );
               },
             ),
             DrawerMenu(

@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:odds_league/custom_theme.dart';
 import 'package:odds_league/src/custom_drawer.dart';
 import 'package:odds_league/src/home/home_view.dart';
+import 'package:odds_league/src/home/home_view_param.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../custom_icons.dart';
@@ -100,8 +101,11 @@ class CalendarView extends StatelessWidget {
             ),
           ),
           onDaySelected: (dayOne, dayTwo) {
-            Navigator.pushReplacementNamed(context, HomeView.routeName,
-                arguments: dayTwo);
+            Navigator.pushReplacementNamed(
+              context,
+              HomeView.routeName,
+              arguments: HomeViewParam(date: dayTwo),
+            );
           },
         ),
       ),
