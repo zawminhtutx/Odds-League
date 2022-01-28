@@ -1,4 +1,4 @@
-package com.odds2021league
+package com.odds21leagueapp
 
 import io.flutter.embedding.android.FlutterActivity
 

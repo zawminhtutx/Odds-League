@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.odds2021league">
+    package="com.odds21leagueapp">
 
     <queries>
         <intent>
@@ -12,7 +12,7 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="Odds League">
+        android:label="Victory League">
 
         <activity
             android:name=".MainActivity"
