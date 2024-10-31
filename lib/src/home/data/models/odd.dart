@@ -26,5 +26,6 @@ class Odd extends Equatable {
     if (value != null) {
       return double.parse(value);
     }
+    return null;
   }
 }

@@ -141,5 +141,6 @@ class ApiRequests {
 
       return oddMapToBeReturned;
     }
+    return null;
   }
 }
